@@ -56,8 +56,8 @@ var pollingtoevent = require('polling-to-event');
                 that.state = re.test(data);
             }
             else {
-        	    var binaryState = parseInt(data);
-	    	    that.state = binaryState > 0;
+                var binaryState = parseInt(data);
+                that.state = binaryState > 0;
             }
             that.log(that.service, "received power",that.status_url, "state is currently", that.state.toString());
 			// switch used to easily add additonal services
@@ -178,8 +178,8 @@ var pollingtoevent = require('polling-to-event');
         }
         else
         {
-		    var binaryState = parseInt(responseBody);
-		    powerOn = binaryState > 0;
+            var binaryState = parseInt(responseBody);
+            powerOn = binaryState > 0;
         }
         this.log("Power state is currently %s", powerOn.toString());
 		callback(null, powerOn);
