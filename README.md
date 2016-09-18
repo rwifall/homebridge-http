@@ -16,7 +16,7 @@ Specify the `brightnesslvl_url` to return the current brightness level as an int
 
 Switch Handling and brightness Handling support 3 methods, yes for polling on app load, realtime for constant polling or no polling
 
-Specify `status_regex` to specify a regular expression to match against in the response to the status_url request to determine if the status is true.  For instance, if your status_url returns "PowerState:true" when the status is on and "PowerState:true" when the status is off, in your configuration you could specify: `"status_regex": "PowerState:true"` 
+Specify `status_regex` to specify a regular expression to match against in the response to the status_url request to determine if the status is true.  For instance, if your status_url returns "PowerState:true" when the status is on and "PowerState:false" when the status is off, in your configuration you could specify: `"status_regex": "PowerState:true"` 
 
 Configuration sample:
 
