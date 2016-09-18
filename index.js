@@ -18,6 +18,7 @@ var pollingtoevent = require('polling-to-event');
 		this.off_url                = config["off_url"];
 		this.off_body               = config["off_body"];
 		this.status_url             = config["status_url"];
+		this.status_regex           = config["status_regex"]            || "";
 		this.brightness_url         = config["brightness_url"];
 		this.brightnesslvl_url      = config["brightnesslvl_url"];
 		this.http_method            = config["http_method"] 	  	 	|| "GET";;
@@ -49,10 +50,16 @@ var pollingtoevent = require('polling-to-event');
         		})
 			}, {longpolling:true,interval:300,longpollEventName:"statuspoll"});
 
-		statusemitter.on("statuspoll", function(data) {       
-        	var binaryState = parseInt(data);
-	    	that.state = binaryState > 0;
-			that.log(that.service, "received power",that.status_url, "state is currently", binaryState); 
+		statusemitter.on("statuspoll", function(data) {
+            if (Boolean(that.status_regex)) {
+                var re = new RegExp(that.status_regex);
+                that.state = re.test(data);
+            }
+            else {
+        	    var binaryState = parseInt(data);
+	    	    that.state = binaryState > 0;
+            }
+            that.log(that.service, "received power",that.status_url, "state is currently", that.state.toString());
 			// switch used to easily add additonal services
 			switch (that.service) {
 				case "Switch":
@@ -155,6 +162,8 @@ var pollingtoevent = require('polling-to-event');
 	}
 	
 	var url = this.status_url;
+    var regex = this.status_regex;
+      
 	this.log("Getting power state");
 	
 	this.httpRequest(url, "", "GET", this.username, this.password, this.sendimmediately, function(error, response, responseBody) {
@@ -162,9 +171,17 @@ var pollingtoevent = require('polling-to-event');
 		this.log('HTTP get power function failed: %s', error.message);
 		callback(error);
 	} else {
-		var binaryState = parseInt(responseBody);
-		var powerOn = binaryState > 0;
-		this.log("Power state is currently %s", binaryState);
+        var powerOn = false;
+        if (Boolean(regex)) {
+            var re = new RegExp(regex);
+            powerOn = re.test(responseBody);
+        }
+        else
+        {
+		    var binaryState = parseInt(responseBody);
+		    powerOn = binaryState > 0;
+        }
+        this.log("Power state is currently %s", powerOn.toString());
 		callback(null, powerOn);
 	}
 	}.bind(this));
